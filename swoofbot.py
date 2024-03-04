@@ -18,9 +18,21 @@ if overview.status_code == 200:
 
     ## scraping valorant data
     views = re.search(r'Claim Profile\d+,\d+', stats).group(0).replace('Claim Profile', '')
-    rank = re.search(r'Current Rating\s+([^\s]+ \d)', stats).group(1)
-    rr = re.search(r'\d+', re.search(r'Current Rating\s+([^\s]+ \d  \d+)', stats).group(1)[-3:]).group(0)
-    games = int(re.search(r'\d+', re.search(r'\d+  \d+ WLD', stats).group(0).replace('Claim Profile', '')).group(0)) + int(re.search(r'  \d+', re.search(r'\d+  \d+ WLD', stats).group(0).replace('Claim Profile', '')).group(0))
+    
+    rankrr_match = re.search(r'Current Rating([^\d]+)(\d+)', stats)
+    if rankrr_match:
+        rank = rankrr_match.group(1).strip() + " " + rankrr_match.group(2)[:1]
+        rr = rankrr_match.group(2)[1:4]
+    else:
+        rank = "unknown D:"
+        rr = "unknown too D:"
+
+    games_match = re.search(r'(\d+)\s+Matches', stats)
+    if games_match:
+        games = int(games_match.group(1))
+    else:
+        games = "an unknown amount of "   
+    
     time = re.search(r'\d+', re.search(r'\d+h Playtime', stats).group(0)).group(0)
 
     ## summary message ready for discord
